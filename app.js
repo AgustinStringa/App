@@ -78,47 +78,76 @@ const scrapingProfile = async () => {
             (document.querySelector(urlLinkedin)) ? profile.urlLinkedin = document.querySelector(urlLinkedin).href : null
         }
 
-        await autoscrollToElement("body")
         await sleep(4);
-        for (let item of items_experiencie) {
 
-            await sleep(1);
-            if (item) {
-                //alert('esta el item');
+        await autoscrollToElement("body").then(async () => {
+
+            await sleep(6);
+            let count = 0;
+
+            if (items_experiencie.length > 0 || items_education.length > 0) {
+                console.log('HAY EMPLEOS O EXPERIENCIAS');
+                while (profile.experiences.length == 0 || profile.educations.length == 0) {
+                    for (let item of items_experiencie) {
+
+                        await sleep(1);
+                        if (item) {
+                            //alert('esta el item');
+                        } else {
+                            alert('no esta no se k pasa');
+                        }
+
+                        profile.experiences.push({})
+
+                        item.getElementsByTagName('h3').length > 0 ? profile.experiences[num_exp].jobPosition = item.getElementsByTagName('h3')[0].innerText : null
+                        item.getElementsByClassName('pv-entity__secondary-title').length > 0 ? profile.experiences[num_exp].companyName = item.getElementsByClassName('pv-entity__secondary-title')[0].innerText : null
+                        item.getElementsByClassName("pv-entity__bullet-item-v2").length > 0 ? profile.experiences[num_exp].duration = item.getElementsByClassName("pv-entity__bullet-item-v2")[0].innerText : null
+                        item.getElementsByClassName("pv-entity__description").length > 0 ? profile.experiences[num_exp].description = item.getElementsByClassName("pv-entity__description")[0].textContent : null
+
+                        num_exp++;
+                        // console.log('profile a envitar', profile);
+                    }
+
+                    for (let edu_item of items_education) {
+                        await sleep(1);
+
+
+                        if (edu_item) {
+
+                        } else {
+                            alert('no education');
+                        }
+
+                        profile.educations.push({});
+
+                        edu_item.getElementsByClassName("pv-entity__school-name") ? profile.educations[num_edu].institutionName = edu_item.getElementsByClassName("pv-entity__school-name")[0].innerText : null;
+                        if (edu_item.getElementsByClassName("pv-entity__comma-item").length > 0) {
+                            edu_item.getElementsByClassName("pv-entity__comma-item").length > 1 ? profile.educations[num_edu].carreer = `${edu_item.getElementsByClassName("pv-entity__comma-item")[0].innerText} ${edu_item.getElementsByClassName("pv-entity__comma-item")[1].innerText}` : profile.educations[num_edu].carreer = `${edu_item.getElementsByClassName("pv-entity__comma-item")[0].innerText}`
+
+                        }
+
+                        num_edu++;
+                    }
+
+                    count++;
+
+                    await sleep(1);
+                    if (profile.experiences.length > 0 || profile.educations.length > 0) {
+                        break;
+                    }
+
+                }
             } else {
-                alert('no esta no se k pasa');
+                console.log('NO HAY EMPLEOS O EXPERIENCIAS');
+
+                return profile;
             }
 
-            profile.experiences.push({})
 
-            item.getElementsByTagName('h3').length > 0 ? profile.experiences[num_exp].jobPosition = item.getElementsByTagName('h3')[0].innerText : null
-            item.getElementsByClassName('pv-entity__secondary-title').length > 0 ? profile.experiences[num_exp].companyName = item.getElementsByClassName('pv-entity__secondary-title')[0].innerText : null
-            item.getElementsByClassName("pv-entity__bullet-item-v2").length > 0 ? profile.experiences[num_exp].duration = item.getElementsByClassName("pv-entity__bullet-item-v2")[0].innerText : null
-            item.getElementsByClassName("pv-entity__description").length > 0 ? profile.experiences[num_exp].description = item.getElementsByClassName("pv-entity__description")[0].textContent : null
+        })
 
-            num_exp++;
-            // console.log('profile a envitar', profile);
-        }
 
-        for (let edu_item of items_education) {
-            await sleep(1);
-            if (edu_item) {
-
-            } else {
-                alert('no education');
-            }
-
-            profile.educations.push({});
-
-            edu_item.getElementsByClassName("pv-entity__school-name") ? profile.educations[num_edu].institutionName = edu_item.getElementsByClassName("pv-entity__school-name")[0].innerText : null;
-            if (edu_item.getElementsByClassName("pv-entity__comma-item").length > 0) {
-                edu_item.getElementsByClassName("pv-entity__comma-item").length > 1 ? profile.educations[num_edu].carreer = `${edu_item.getElementsByClassName("pv-entity__comma-item")[0].innerText} ${edu_item.getElementsByClassName("pv-entity__comma-item")[1].innerText}` : profile.educations[num_edu].carreer = `${edu_item.getElementsByClassName("pv-entity__comma-item")[0].innerText}`
-
-            }
-
-            num_edu++;
-        }
-        // console.log('profile a envitar', profile);
+        console.log('profile a envitar', profile);
 
 
 
